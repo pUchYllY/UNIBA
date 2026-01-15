@@ -1,0 +1,177 @@
+classDiagram
+	class Utenti{
+
+	<<entity>>
+	- nominativo : String
+	- listaPrestiti : List~Prestiti~
+	- listaPrenotazioni : List~Prenotazioni~
+	- email : String
+	- passWord : String
+
+	%% metodi che lavorano sulla manipolazione delle informazioni degli Utenti
+
+	%% metodi che lavorano sugli attributi
+	+ setNominativo(nuovoNominativo : String) void %% None su Python
+	+ getNominativo() String
+	+ setEmail(nuovaEmail : String) None
+	+ getEmail() String
+	+ setPassWord(nuovaPassWord : String) None
+	+ getPassWord() String
+
+	%% metodi che manipolano le liste
+	%% listaPrestiti
+	+ aggiungiPrestito() void 
+	%% append
+	+ rimuoviPrestito() void 
+	%% remove; rimuove per email attraverso l'istanza 
+	+ estraiPrestito() void 
+	%% pop
+	+ ordinaPrestitiPerData() void 
+	%% sort(key=lambda p: p.dataPrestito)
+	+ misuraNumPrestiti(listaP : List~Prestiti~) int
+	%% listaPrenotazioni
+
+	}
+
+	class Prestiti{
+
+	<<entity>>
+	- codice : int
+	- operaPrestata : Opere
+	- dataPrestito : String
+	- dataScadenza : String
+
+	%% metodi che lavorano sulla manipolazione delle informazioni dei Prestiti
+	+ setCodice(nuovoCodice : int) void
+	+ getCodice() int
+	+ setOpera(nuovaOpera : Opere) void
+	+ getOpera() Opere
+	+ setDataPrestito(nuovaData : String) void
+	+ getDataPrestito() String
+	+ setDataScadenza(nuovaData : String) void
+	+ getDataScadenza() String
+
+	}
+
+	class Opere{
+
+	<<entity>>
+	- titolo : String
+	- isbn : String
+	- autori : List~String~
+	- generi : List~String~
+	- dataPubblicazione : String
+	- isDisp : bool
+	- numPagine : int
+	- numOpereDisponibili : int
+
+	%% metodi che lavorano sulla manipolazione delle informazioni delle Opere
+	+ setTitolo(nuovoTitolo : String) void
+	+ getTitolo() String
+	+ setIsbn(nuovoIsbn : String) void
+	+ getIsbn() String
+	+ setData(nuovaData : String) void
+	+ getData() String
+	+ setDisponibilita(nuovoBool : int) void
+	+ getDisponibilita() bool
+	+ setNumPagine(nuovePag : int) void
+	+ getNumPagine() int
+	+ setNumOpereDisp(nuovoNum : int) void
+	+ getNumOpereDisp() int
+
+	%% metodi che manipolano le liste
+	%% autori
+	+ aggiungiAutore() void
+	+ rimuoviAutore() void
+	+ ordinaAutori() void
+	%% generi
+	+ aggiungiGenere() void
+	+ rimuoviGenere() void
+	+ ordinaGeneri() void
+
+	}
+
+	class RegistroUtenti{
+
+	<<entity>>
+	- listaUtenti : List~Utenti~
+
+	%% metodi che lavorano sulla manipolazione degli Utenti
+	+ aggiungiUtente() void
+	+ rimuoveUtente() void
+	+ estraiUtente() void
+	+ ordinaUtenti() void
+
+	}
+
+	class Catalogo{
+
+	<<entity>>
+	- listaOpere : List~Opere~ 
+	%% lista di tutte le opere 
+
+	%% metodi che lavorano sulla manipolazione di listaOpere e Opere
+	+ aggiungiOpera() void
+	+ rimuoveOpera() void
+	+ estraiOpere() void
+	+ ordinaOpere() void
+
+	}
+
+	%%---------------------------------------------------------------------
+	
+	class Gestione{
+
+	<<control>>
+	- catalogo : Catalogo
+	- registroUtenti : UtentiDB
+
+	%% gestione Opere
+	+ creaOpera() void
+	+ aggiornaOpera() void
+	+ cancellaOpera() void
+	+ ordinaCatalogo() void
+
+	%% gestione Utenti
+	+ inserisciUtente() void
+	+ aggiornaUtente() void
+	+ cancellaUtente() void
+	+ ordinaRegistroUtenti() void
+
+	}
+
+	%%---------------------------------------------------------------------------------
+
+	class UI{
+
+	<<boundary>>
+	- gestioneUtenti : GestioneUtenti
+	- gestioneOpere : GestioneOpere
+
+	%% metodi che interagiscono con le classi di controllo
+	%% Utenti
+	+ registraAccount() void
+	+ accediAccount() void
+	+ modificaAccount() void
+	+ cancellaAccount() void
+	%% Opere
+	+ registraOpera() void
+	+ modificaOpera() void
+	+ cancellaOpera() void
+	%% Prestiti
+	+ effettuaPrestito() void
+	+ modificaPrestito() void
+	+ cancellaPrestito() void
+
+	}
+
+	UI <-- Gestione : comunica con
+	
+	Gestione  <-- RegistroUtenti : gestisce
+	Gestione  <-- Catalogo : gestisce
+
+	RegistroUtenti *-- "1..*" Utenti : contiene da
+	Catalogo *-- "1..*" Opere : contiene da
+
+	Utenti "1" <-- "1..3" Prestiti : effettua da
+	Prestiti "1" o-- "1" Opere : e' correlato a
