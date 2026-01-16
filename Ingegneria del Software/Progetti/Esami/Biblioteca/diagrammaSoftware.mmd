@@ -1,0 +1,139 @@
+classDiagram
+
+	class Prestito
+		<<entity>>
+
+		- libroPrestito : Libro
+		- dataPrestito : Data
+		- dataScadenza : Data
+		- dataRestituzione : Data
+		- status : String
+		- scaduto : bool
+		- penale : int
+
+		+ impostaLibroPrestito(nuovoLibro : Libro) void
+		+ leggiLibro() Libro
+		+ impostaDataPrestito() void
+		+ leggiDataPrestito() Data
+		+ impostaDataScadenza() void
+		+ leggiDataScadenza() Data
+		+ impostaDataRestituzione() void
+		+ leggiDataRestituzione() Data
+		+ setStatus(nuovoStatus : String) void
+		+ getStatus() String
+		+ isScaduto() bool
+
+	class Utente
+		<<entity>>
+
+		- nominativo : String
+		- codUtente : int
+		- email : String
+		- password : String
+		- listaLibriPrestito : List~Prestito~
+
+		+ setNominativo(nuovoNom : Stringa) void
+		+ getNominativo() String
+		+ setCodUtente(nuovoCod : int) void
+		+ getCodUtente() String
+		+ setEmail(nuovaEmail : String) void
+		+ getEmail() String
+		+ setPassword(nuovaPass) void
+		+ getPassword() String
+
+		+ appendiPrestito() void
+		+ estraiPrestito() void
+		+ rimuoviPrestito() void
+		%%+ cercaPrestito() void
+		+ ordinaPrestiti() void
+
+	class Libro
+		<<entity>>
+
+		- titolo : String
+		- genere : String
+		- isbn : String
+		- pagine : int
+		- isDisponibile : bool
+		- numCopieDisp : int
+
+		+ setTitolo(nuovoTitolo : String) void
+		+ getTitolo() String
+		+ setGenere(nuovoGenere : String) void
+		+ getGenere() String
+		+ setIsbn(nuovoIsbn : String) void
+		+ getIsbn() String
+		+ setPagine(nuovePagine : int) void
+		+ getPagine() int
+		+ setIsDisponibile(nuovoBool : bool) void
+		+ getIsDisponibile() bool
+		+ setnumCopieDisp(nuovoNum : int) void
+		+ getnumCopieDisp() int
+
+	class RegistroUtenti
+		<<entity>>
+
+		- registro : List~Utente~
+
+		+ aggiungiUtente() void
+		+ estraiUtente() Utente
+		+ rimuoviUtente() void
+		+ cercaUtente(email : String) void
+		+ ordinaUtenti() void
+		%%+ 
+		%%+ 
+		%%+ 
+		%%+ 
+
+	class Catalogo
+		<<entity>>
+
+		- depLibri : List~Libro~
+
+		+ aggiungiLibro(l : Libro) void
+		+ estraiLibro() Libro
+		+ rimuoviLibro() void
+		+ cercaLibro(isbn : String) void
+		+ ordinaLibri() void
+		%%+ 
+		%%+ 
+		%%+ 
+		%%+ 
+
+	class Console
+		<<control>>
+
+		- repoUtenti : RegistroUtenti
+		- repoLibri : Catalogo
+
+		+ creaUtente()
+		+ salvaUtente()
+		+ modificaUtente()
+		+ eliminaUtente()
+		
+		+ creaPrestito()
+		+ salvaPrestito()
+		+ modificaPrestito()
+		+ eliminaPrestito()
+
+	class UI
+		<<boundary>>
+
+		- c : Console
+
+		+ registraAccount()
+		+ aggiornaAccount()
+		+ eliminaAccount()
+
+		+ effettuaPrestiti()
+		+ aggiornaPrestiti()
+		+ cancellaPrestiti
+		%%+
+
+
+
+
+
+
+
+

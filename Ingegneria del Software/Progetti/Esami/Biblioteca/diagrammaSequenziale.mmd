@@ -1,0 +1,124 @@
+sequenceDiagram
+	actor User
+
+	participant UI@{"type":"boundary"}
+	participant Console@{"type":"control"}
+	participant Catalogo@{"type":"entity"}
+	participant RegistroUtenti@{"type":"entity"}
+	participant Libro@{"type":"entity"}
+	participant Utente@{"type":"entity"}
+	participant Prestito@{"type":"entity"}
+
+	create ui:UI
+	create con:Console
+	create cat:Catalogo
+	create regUt:RegistroUtenti
+
+	%% create l:Libro
+	%% create u:Utente
+	%% create p:Prestito
+
+	UI->>User:msgBenvenuto()
+
+	loop User non effettua un logout oppure non chiuda il programma
+
+	UI->>User:msgAutenticazione()
+	UI->>User:Richiede una modalita' di autenticazione
+	User-->>UI:Immette una modalita' di autenticazione
+
+	alt User richiede una registrazione
+		create u:Utente
+
+		loop risposta=="no"
+			ui->>User: Richiede un nominativo
+			User-->>ui:Inserisce il suo nominativo
+			ui->>User:Richiede un indirizzo e-mail
+			User-->>ui:Immette il suo indirizzo e-mail
+			ui->>User:Richiede una password
+			User-->>ui:Immette una password
+
+			ui->>User:Richiede una risposta di conferma
+			User-->>ui: Immette una risposta
+			loop User immette valori diversi dall'accettazione o rifiuto
+				ui->>User:Segnalazione di invalidita' di risposta
+				ui->>User:Richiede una risposta
+				User-->>ui:Immette una risposta
+			end
+
+			opt User conferma i valori
+				ui->>ui:registraAccount()
+				ui->>-console:registrazioneAccount(nominativo,email,password)
+				activate con
+				con->>con:creaUtente()
+
+				activate u
+				con->>u:setNominativo(nuovoNominativo)
+				con->>u:setEmail(nuovaEmail)
+				con->>u:setPassword(nuovaPassword)
+				deactivate u
+
+				ui-->>User:msgAccountCreato()
+			end
+
+		ui->>User:msgMostraOpzioni()
+		ui->>User:Richiede una scelta
+		User-->>ui:Immette una scelta
+
+		%% 
+		alt User richiede una modifica all'account
+			%% ...
+		else User richiede un prestito
+			ui->>User:Richiede titolo del libro
+			User-->>ui:Immette il titolo
+			ui->>User:Richiede ISBN
+			User-->>ui:Immette ISBN
+			ui->>User:Richiede il genere letterario
+			User-->>ui:Immette il genere letterario
+
+			loop non viene confermato il prestito
+				ui->>ui:effettuaPrestiti()
+
+				ui->>+con:creaPrestito(titolo,isbn,genere)
+
+				loop ISBN non sia ancora presente nel cat e non venga confermato il libro trovato
+					con->>+cat:estraiLibro()
+					cat-->>-con: return libro
+					
+					opt libro.titolo == titolo
+						con->>ui:Attende una risposta
+						ui->>User:Richiede una risposta
+						User-->>ui:Immette una risposta
+						
+						opt User inserisce una risposta non valida
+							ui->>User:Richiesta una risposta valida
+							User-->>ui:Immette una risposta
+						end
+					end
+				end
+
+				ui->>con:salvaPrestito(p,libro)
+				create p:Prestito
+				con->>+p:impostaLibroPrestito(l)
+				con->>p:impostaDataPrestito()
+				con->>p:impostaDataScadenza()
+				con->>p:setStatus("attivo")
+				deactivate p
+
+				con->>+u:appendiPrestito(p)
+				deactivate u
+				deactivate con
+				ui-->>User:msgPrestitoSalvato()
+			end
+		end
+	else User richiede l'accesso
+		loop
+	    end
+	end
+
+	ui->>+con:salvaUtente(u)
+	con->>+regUt:aggiungiUtente(u)
+	regUt-->>-con:ritorno
+	con-->>-ui:ritorno
+	ui-->>User:msgAccoutSalvato()
+	ui-->>-User:msgAddio()
+

@@ -1,0 +1,28 @@
+```mermaid
+
+classDiagram
+	class Utente
+		nominativo
+		codUtente
+		email
+		password
+		listaLibriPrestito
+
+	class Libro
+		titolo
+		genere
+		isbn
+		pagine
+		isDisponibile
+		numCopieDisp
+
+	class RegistroUtenti
+		registro
+
+	class Catalogo
+		depLibri
+
+	class Prestito
+		libroPrestito
+		dataPrestito
+		dataScadenza
