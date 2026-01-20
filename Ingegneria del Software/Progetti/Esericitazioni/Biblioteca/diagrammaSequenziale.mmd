@@ -1,3 +1,5 @@
+```mermaid
+
 sequenceDiagram
 	actor User
 
@@ -83,7 +85,7 @@ sequenceDiagram
 										ui->>User: msgMostraLibroTrovato()
 										ui->>User: msgRichiestaConfermaPrestito()
 										User-->>ui: inserisceRisposta()
-										
+
 										opt risposta != "si" and risposta != "no"
 											ui->>User: msgRispostaNonValida()
 											ui->>User: msgRichiestaRispostaValida()
