@@ -8,7 +8,6 @@ classDiagram
 		- dataScadenza : Data
 		- dataRestituzione : Data
 		- status : String
-		- scaduto : bool
 		- penale : int
 
 		+ setLibroPrestito(nuovoLibro : Libro) void
@@ -22,6 +21,8 @@ classDiagram
 		+ setStatus(nuovoStatus : String) void
 		+ getStatus() String
 		+ isScaduto() bool
+		+ setPenale(nuovaPenale : int) void
+		+ getPenale() int
 
 	class Utente
 		<<entity>>
@@ -54,7 +55,6 @@ classDiagram
 		- genere : String
 		- isbn : String
 		- pagine : int
-		- isDisponibile : bool
 		- numCopieDisp : int
 
 		+ setTitolo(nuovoTitolo : String) void
@@ -65,8 +65,7 @@ classDiagram
 		+ getIsbn() String
 		+ setPagine(nuovePagine : int) void
 		+ getPagine() int
-		+ setIsDisponibile(nuovoBool : bool) void
-		+ getIsDisponibile() bool
+		+ isDisponibile() bool
 		+ setnumCopieDisp(nuovoNum : int) void
 		+ getnumCopieDisp() int
 

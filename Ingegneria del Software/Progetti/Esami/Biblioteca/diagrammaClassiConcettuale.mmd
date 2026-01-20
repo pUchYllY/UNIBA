@@ -1,6 +1,14 @@
 ```mermaid
 
 classDiagram
+	class Prestito
+		libroPrestito
+		dataPrestito
+		dataScadenza
+		dataRestituzione
+		status
+		penale
+
 	class Utente
 		nominativo
 		codUtente
@@ -13,7 +21,6 @@ classDiagram
 		genere
 		isbn
 		pagine
-		isDisponibile
 		numCopieDisp
 
 	class RegistroUtenti
@@ -22,7 +29,3 @@ classDiagram
 	class Catalogo
 		depLibri
 
-	class Prestito
-		libroPrestito
-		dataPrestito
-		dataScadenza
