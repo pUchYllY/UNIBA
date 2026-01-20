@@ -1,0 +1,226 @@
+sequenceDiagram
+	actor User
+
+	participant UI@{"type":"boundary"}
+	participant Console@{"type":"control"}
+	participant Catalogo@{"type":"entity"}
+	participant RegistroUtenti@{"type":"entity"}
+	participant Libro@{"type":"entity"}
+	participant Utente@{"type":"entity"}
+	participant Prestito@{"type":"entity"}
+
+	create ui:UI
+	create con:Console
+	create cat:Catalogo
+	create regUt:RegistroUtenti
+
+	%% create l: Libro
+	%% create u: Utente
+	%% create p: Prestito
+
+	activate ui
+	ui->>User: msgBenvenuto()
+
+	loop modAutenticazione != "chiusura" and modAutenticazione != "logout"
+		ui->>User: msgModAutenticazione()
+		ui->>User: msgRichiestaAutenticazione()
+		User->>ui: inserisceModAutenticazione()
+
+		opt modAutenticazione != "logout"
+			alt modAutenticazione == "registrazione"
+
+				loop risposta=="no"
+					ui->>User: msgRichiestaCredenzialiReg()
+					User->>ui: inserisceCredenzialiReg(nominativo, email, password)
+					ui->>User: msgRichiestaRisposta()
+					User-->>ui: inserisceRisposta()
+
+					loop risposta != "si" and risposta != "no"
+						ui->>User: msgRispostaNonValida()
+						ui->>User: msgRichiestaRispostaValida()
+						User->>ui: inserisceRisposta()
+					end
+
+					opt risposta == "si"
+						ui->>+con: creaUtente(nominativo, email, password)
+						create u : Utente
+
+						con->>+u: setNominativo(nominativo)
+						con->>u: setEmail(email)
+						con->>u: setPassword(password)
+						u-->>-con: return u
+						
+						note over con
+							utLog = u
+						end
+					end
+				end
+
+				con-->>-ui: return bool
+
+				alt bool == true
+					ui-->>User: msgRegistrazioneSucc()
+
+					loop modAutenticazione != "logout"
+						ui->>User: msgMostraOpzioni()
+						ui->>User: msgRichiestaOpzione()
+						User->>ui: inserisceOpzione()
+
+						%% 
+						alt opzione == "modifica"
+							%% ...
+						else opzione == "prestito"
+							loop risposta == "si"
+								ui->>User: msgRichiestaCredenzialiLibro()
+								User->>ui: inserisceCredenzialiLibro(titolo, isbn, genere)
+
+								loop ricerca libro per ISBN in cat.depLibri finche' non trovato
+									con->>+cat: estraiLibro()
+									cat-->>-con: return l
+
+									opt l.isbn == isbn
+										con-->>ui: libro trovato
+										ui->>User: msgMostraLibroTrovato()
+										ui->>User: msgRichiestaConfermaPrestito()
+										User-->>ui: inserisceRisposta()
+										
+										opt risposta != "si" and risposta != "no"
+											ui->>User: msgRispostaNonValida()
+											ui->>User: msgRichiestaRispostaValida()
+											User-->>ui: inserisceRisposta()
+										end
+									end
+								end
+
+								opt rispsta == "si"
+									ui->>+con: creaPrestito(titolo, isbn, genere)
+									create p : Prestito
+									con-->>-ui: Prestito creato
+
+									ui->>+con: salvaPrestito(p,l)
+									con->>+p: impostaLibroPrestito(l)
+									con->>p: impostaDataPrestito(data)
+									con->>p: impostaDataScadenza(data)
+									con->>p: setStatus("attivo")
+									p-->>-con: return p
+
+									con->>+u: appendiPrestito(p)
+									u-->>-con: Prestito assegnato
+								end
+							end
+
+							con-->>-ui: return bool
+
+							alt bool == true
+								ui-->>User: msgPrestitoSalvato()
+							else
+								ui-->>User: msgPrestitoNonSalvato()
+							end
+						end
+					end
+
+					ui->>+con: salvaUtente(u)
+					con->>+regUt: aggiungiUtente(u)
+					regUt-->>-con: Utente aggiunto nel registro
+					con-->>ui: Account salvato
+					ui-->>User: msgAccoutSalvato()
+
+				else
+					ui-->>User: msgRegistrazioneFallita()
+				end
+
+			else modAutenticazione == "login"
+				ui->>User: msgRichiestaCredenziali()
+				User->>ui: inserisceCredenzialiLogin(email,password)
+
+				ui->>+con: trovaUtente(email,password)
+				loop ricerca utente finche' non trovato
+					con->>+regUt: estraiUtente()
+					regUt-->>-con: return u
+					
+					opt email == u.email && password != u.password
+						loop count <= 3 and password != u.password
+							con-->>ui: password errata
+							ui-->>User: msgPasswordErrata()
+							ui->>User: msgRichiestaPassword()
+							User->>ui: inseriscePassword(password)
+						end
+					end
+				end
+				con-->>-ui:return bool
+
+				alt bool == true
+					ui-->>User: msgLoginSuccesso()
+
+					loop opzione != "logout"
+						ui->>User: msgMostraOpzioni()
+						ui->>User: msgRichiestaOpzione()
+						User-->>ui: inserisceOpzione()
+
+						%% 
+						alt opzione == "modifica"
+							%% ...
+						else opzione == "prestito"
+							ui->>User: msgRichiestaCredenzialiLibro()
+							User->>ui: inserisceCredenzialiLibro(titolo,isbn,genere)
+							ui->>+con: trovaPrestito(titolo,isbn,genere)
+
+							loop ricerca libro per ISBN finche' non trovato
+								con->>+cat: estraiLibro()
+								cat-->>-con: return l
+
+								opt l.isbn == isbn
+									con-->>ui: libro trovato
+									ui->>User: msgMostraLibroTrovato()
+									ui->>User: msgRichiestaConfermaPrestito()
+									User-->>ui: inserisceRisposta()
+
+									loop risposta != "si" and risposta != "no"
+										ui->>User: msgRispostaNonValida()
+										ui->>User: msgRichiestaRispostaValida()
+										User-->>ui: inserisceRisposta()
+									end
+								end
+							end
+
+							opt rispsta == "si"
+								ui->>+con: creaPrestito(titolo, isbn, genere)
+								create p : Prestito
+								con-->>-ui: Prestito creato
+
+								ui->>+con: salvaPrestito(p,libro)
+								con->>+p: impostaLibroPrestito(l)
+								con->>p: impostaDataPrestito()
+								con->>p: impostaDataScadenza()
+								con->>p: setStatus("attivo")
+								p-->>-con: return p
+
+								con->>+u: appendiPrestito(p)
+								u-->>-con: Prestito assegnato
+							end
+
+							con-->>-ui: return bool
+
+							opt bool == true
+								ui-->>User: msgPrestitoSalvato()
+							else
+								ui-->>User: msgPrestitoNonSalvato()
+							end
+						end
+					end
+
+					ui->>+con: salvaUtente(u)
+					con->>+regUt: aggiungiUtente(u)
+					regUt-->>-con: Utente aggiunto
+					con-->>ui: Account salvato
+					ui-->>User: msgAccoutSalvato()
+
+				else
+					ui-->>User:msgLoginFallito()
+				end
+			end
+		end
+	end
+
+	ui-->>-User: msgAddio()
+
