@@ -11,14 +11,14 @@ classDiagram
 		- scaduto : bool
 		- penale : int
 
-		+ impostaLibroPrestito(nuovoLibro : Libro) void
-		+ leggiLibro() Libro
-		+ impostaDataPrestito() void
-		+ leggiDataPrestito() Data
-		+ impostaDataScadenza() void
-		+ leggiDataScadenza() Data
-		+ impostaDataRestituzione() void
-		+ leggiDataRestituzione() Data
+		+ setLibroPrestito(nuovoLibro : Libro) void
+		+ getLibro() Libro
+		+ setDataPrestito(nuovaData : Data) void
+		+ getDataPrestito() Data
+		+ setDataScadenza(nuovaData : Data) void
+		+ getDataScadenza() Data
+		+ setDataRestituzione(nuovaData : Data) void
+		+ getDataRestituzione() Data
 		+ setStatus(nuovoStatus : String) void
 		+ getStatus() String
 		+ isScaduto() bool
@@ -41,8 +41,8 @@ classDiagram
 		+ setPassword(nuovaPass) void
 		+ getPassword() String
 
-		+ appendiPrestito() void
-		+ estraiPrestito() void
+		+ appendiPrestito(p : Prestito) void
+		+ estraiPrestito() Prestito
 		+ rimuoviPrestito() void
 		%%+ cercaPrestito() void
 		+ ordinaPrestiti() void
@@ -103,33 +103,78 @@ classDiagram
 	class Console
 		<<control>>
 
-		- repoUtenti : RegistroUtenti
-		- repoLibri : Catalogo
+		- regUt : RegistroUtenti
+		- cat : Catalogo
 
-		+ creaUtente()
-		+ salvaUtente()
-		+ modificaUtente()
-		+ eliminaUtente()
-		
-		+ creaPrestito()
-		+ salvaPrestito()
-		+ modificaPrestito()
-		+ eliminaPrestito()
+		- utLog : Utente
+		- libPrestito : libroPrestito
+		- p : Prestito
+
+		+ creaUtente(nominativo : String, email : String, password : String) bool
+		+ salvaUtente(u) void
+		+ modificaUtente() void
+		+ eliminaUtente() bool
+		%%+ richiediUtente()
+
+		+ creaPrestito(t : String, isbn : String, genere : String) bool
+		+ salvaPrestito(p : Prestito,l : Libro) bool
+		+ modificaPrestito() void
+		+ eliminaPrestito(email : String) bool
+		+ trovaPrestito(isbn : String) void
 
 	class UI
 		<<boundary>>
 
 		- c : Console
 
-		+ registraAccount()
-		+ aggiornaAccount()
-		+ eliminaAccount()
+		%% utente
+		+ registraAccount() void
+		+ aggiornaAccount() void
+		+ eliminaAccount() void
+		+ login() void
 
-		+ effettuaPrestiti()
-		+ aggiornaPrestiti()
-		+ cancellaPrestiti
-		%%+
+		+ effettuaPrestiti() void
+		+ aggiornaPrestiti() void
+		+ cancellaPrestiti() void
 
+		%% comunicazione input-output
+
+		+ msgBenvenuto() void
+		+ msgModAutenticazione() void
+		+ msgRichiestaAutenticazione() void
+
+		+ msgRichiestaCredenzialiReg() void
+		+ msgRichiestaCredenzialiLogin() void
+
+		+ msgRichiestaRisposta() void
+		+ msgRispostaNonValida() void
+		+ msgRichiestaRispostaValida() void
+
+		+ msgRegistrazioneSucc() void
+		+ msgRegistrazioneFallita() void
+
+		+ msgMostraOpzioni() void
+		+ msgRichiestaOpzione() void
+
+		+ msgRichiestaCredenzialiLibro() void
+		+ msgMostraLibroTrovato() void
+		+ msgRichiestaConfermaPrestito() void
+		+ msgPrestitoSalvato() void
+		+ msgPrestitoNonSalvato() void
+
+		+ msgAccountSalvato() void
+		+ msgLoginSuccesso() void
+		+ msgLoginFallito() void
+
+		+ inserisceAutenticazione() String
+		+ inserisceCredenzialiReg(nominativo : String, email : String, password : String) void
+		+ inserisceCredenzialiLogin(email : String, password : String) void
+		+ inseriscePassword() String
+
+		+ inserisceOpzione() String
+
+		+ inserisceRisposta() String
+		+ inserisceCredenzialiLibro(titolo : String, isbn : String, genere : String) void
 
 
 

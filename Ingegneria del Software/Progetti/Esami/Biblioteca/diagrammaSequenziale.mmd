@@ -14,111 +14,213 @@ sequenceDiagram
 	create cat:Catalogo
 	create regUt:RegistroUtenti
 
-	%% create l:Libro
-	%% create u:Utente
-	%% create p:Prestito
+	%% create l: Libro
+	%% create u: Utente
+	%% create p: Prestito
 
-	UI->>User:msgBenvenuto()
+	activate ui
+	ui->>User: msgBenvenuto()
 
-	loop User non effettua un logout oppure non chiuda il programma
+	loop modAutenticazione != "chiusura" and modAutenticazione != "logout"
+		ui->>User: msgModAutenticazione()
+		ui->>User: msgRichiestaAutenticazione()
+		User->>ui: inserisceModAutenticazione()
 
-	UI->>User:msgAutenticazione()
-	UI->>User:Richiede una modalita' di autenticazione
-	User-->>UI:Immette una modalita' di autenticazione
+		opt modAutenticazione != "logout"
+			alt modAutenticazione == "registrazione"
 
-	alt User richiede una registrazione
-		create u:Utente
+				loop risposta=="no"
+					ui->>User: msgRichiestaCredenzialiReg()
+					User->>ui: inserisceCredenzialiReg(nominativo, email, password)
+					ui->>User: msgRichiestaRisposta()
+					User-->>ui: inserisceRisposta()
 
-		loop risposta=="no"
-			ui->>User: Richiede un nominativo
-			User-->>ui:Inserisce il suo nominativo
-			ui->>User:Richiede un indirizzo e-mail
-			User-->>ui:Immette il suo indirizzo e-mail
-			ui->>User:Richiede una password
-			User-->>ui:Immette una password
+					loop risposta != "si" and risposta != "no"
+						ui->>User: msgRispostaNonValida()
+						ui->>User: msgRichiestaRispostaValida()
+						User->>ui: inserisceRisposta()
+					end
 
-			ui->>User:Richiede una risposta di conferma
-			User-->>ui: Immette una risposta
-			loop User immette valori diversi dall'accettazione o rifiuto
-				ui->>User:Segnalazione di invalidita' di risposta
-				ui->>User:Richiede una risposta
-				User-->>ui:Immette una risposta
-			end
+					opt risposta == "si"
+						ui->>+con: creaUtente(nominativo, email, password)
+						create u : Utente
 
-			opt User conferma i valori
-				ui->>ui:registraAccount()
-				ui->>-console:registrazioneAccount(nominativo,email,password)
-				activate con
-				con->>con:creaUtente()
-
-				activate u
-				con->>u:setNominativo(nuovoNominativo)
-				con->>u:setEmail(nuovaEmail)
-				con->>u:setPassword(nuovaPassword)
-				deactivate u
-
-				ui-->>User:msgAccountCreato()
-			end
-
-		ui->>User:msgMostraOpzioni()
-		ui->>User:Richiede una scelta
-		User-->>ui:Immette una scelta
-
-		%% 
-		alt User richiede una modifica all'account
-			%% ...
-		else User richiede un prestito
-			ui->>User:Richiede titolo del libro
-			User-->>ui:Immette il titolo
-			ui->>User:Richiede ISBN
-			User-->>ui:Immette ISBN
-			ui->>User:Richiede il genere letterario
-			User-->>ui:Immette il genere letterario
-
-			loop non viene confermato il prestito
-				ui->>ui:effettuaPrestiti()
-
-				ui->>+con:creaPrestito(titolo,isbn,genere)
-
-				loop ISBN non sia ancora presente nel cat e non venga confermato il libro trovato
-					con->>+cat:estraiLibro()
-					cat-->>-con: return libro
-					
-					opt libro.titolo == titolo
-						con->>ui:Attende una risposta
-						ui->>User:Richiede una risposta
-						User-->>ui:Immette una risposta
+						con->>+u: setNominativo(nominativo)
+						con->>u: setEmail(email)
+						con->>u: setPassword(password)
+						u-->>-con: return u
 						
-						opt User inserisce una risposta non valida
-							ui->>User:Richiesta una risposta valida
-							User-->>ui:Immette una risposta
+						note over con
+							utLog = u
 						end
 					end
 				end
 
-				ui->>con:salvaPrestito(p,libro)
-				create p:Prestito
-				con->>+p:impostaLibroPrestito(l)
-				con->>p:impostaDataPrestito()
-				con->>p:impostaDataScadenza()
-				con->>p:setStatus("attivo")
-				deactivate p
+				con-->>-ui: return bool
 
-				con->>+u:appendiPrestito(p)
-				deactivate u
-				deactivate con
-				ui-->>User:msgPrestitoSalvato()
+				alt bool == true
+					ui-->>User: msgRegistrazioneSucc()
+
+					loop modAutenticazione != "logout"
+						ui->>User: msgMostraOpzioni()
+						ui->>User: msgRichiestaOpzione()
+						User->>ui: inserisceOpzione()
+
+						%% 
+						alt opzione == "modifica"
+							%% ...
+						else opzione == "prestito"
+							loop risposta == "si"
+								ui->>User: msgRichiestaCredenzialiLibro()
+								User->>ui: inserisceCredenzialiLibro(titolo, isbn, genere)
+
+								loop ricerca libro per ISBN in cat.depLibri finche' non trovato
+									con->>+cat: estraiLibro()
+									cat-->>-con: return l
+
+									opt l.isbn == isbn
+										con-->>ui: libro trovato
+										ui->>User: msgMostraLibroTrovato()
+										ui->>User: msgRichiestaConfermaPrestito()
+										User-->>ui: inserisceRisposta()
+										
+										opt risposta != "si" and risposta != "no"
+											ui->>User: msgRispostaNonValida()
+											ui->>User: msgRichiestaRispostaValida()
+											User-->>ui: inserisceRisposta()
+										end
+									end
+								end
+
+								opt rispsta == "si"
+									ui->>+con: creaPrestito(titolo, isbn, genere)
+									create p : Prestito
+									con-->>-ui: Prestito creato
+
+									ui->>+con: salvaPrestito(p,l)
+									con->>+p: impostaLibroPrestito(l)
+									con->>p: impostaDataPrestito(data)
+									con->>p: impostaDataScadenza(data)
+									con->>p: setStatus("attivo")
+									p-->>-con: return p
+
+									con->>+u: appendiPrestito(p)
+									u-->>-con: Prestito assegnato
+								end
+							end
+
+							con-->>-ui: return bool
+
+							alt bool == true
+								ui-->>User: msgPrestitoSalvato()
+							else
+								ui-->>User: msgPrestitoNonSalvato()
+							end
+						end
+					end
+
+					ui->>+con: salvaUtente(u)
+					con->>+regUt: aggiungiUtente(u)
+					regUt-->>-con: Utente aggiunto nel registro
+					con-->>ui: Account salvato
+					ui-->>User: msgAccoutSalvato()
+
+				else
+					ui-->>User: msgRegistrazioneFallita()
+				end
+
+			else modAutenticazione == "login"
+				ui->>User: msgRichiestaCredenziali()
+				User->>ui: inserisceCredenzialiLogin(email,password)
+
+				ui->>+con: trovaUtente(email,password)
+				loop ricerca utente finche' non trovato
+					con->>+regUt: estraiUtente()
+					regUt-->>-con: return u
+					
+					opt email == u.email && password != u.password
+						loop count <= 3 and password != u.password
+							con-->>ui: password errata
+							ui-->>User: msgPasswordErrata()
+							ui->>User: msgRichiestaPassword()
+							User->>ui: inseriscePassword(password)
+						end
+					end
+				end
+				con-->>-ui:return bool
+
+				alt bool == true
+					ui-->>User: msgLoginSuccesso()
+
+					loop opzione != "logout"
+						ui->>User: msgMostraOpzioni()
+						ui->>User: msgRichiestaOpzione()
+						User-->>ui: inserisceOpzione()
+
+						%% 
+						alt opzione == "modifica"
+							%% ...
+						else opzione == "prestito"
+							ui->>User: msgRichiestaCredenzialiLibro()
+							User->>ui: inserisceCredenzialiLibro(titolo,isbn,genere)
+							ui->>+con: trovaPrestito(titolo,isbn,genere)
+
+							loop ricerca libro per ISBN finche' non trovato
+								con->>+cat: estraiLibro()
+								cat-->>-con: return l
+
+								opt l.isbn == isbn
+									con-->>ui: libro trovato
+									ui->>User: msgMostraLibroTrovato()
+									ui->>User: msgRichiestaConfermaPrestito()
+									User-->>ui: inserisceRisposta()
+
+									loop risposta != "si" and risposta != "no"
+										ui->>User: msgRispostaNonValida()
+										ui->>User: msgRichiestaRispostaValida()
+										User-->>ui: inserisceRisposta()
+									end
+								end
+							end
+
+							opt rispsta == "si"
+								ui->>+con: creaPrestito(titolo, isbn, genere)
+								create p : Prestito
+								con-->>-ui: Prestito creato
+
+								ui->>+con: salvaPrestito(p,libro)
+								con->>+p: impostaLibroPrestito(l)
+								con->>p: impostaDataPrestito()
+								con->>p: impostaDataScadenza()
+								con->>p: setStatus("attivo")
+								p-->>-con: return p
+
+								con->>+u: appendiPrestito(p)
+								u-->>-con: Prestito assegnato
+							end
+
+							con-->>-ui: return bool
+
+							opt bool == true
+								ui-->>User: msgPrestitoSalvato()
+							else
+								ui-->>User: msgPrestitoNonSalvato()
+							end
+						end
+					end
+
+					ui->>+con: salvaUtente(u)
+					con->>+regUt: aggiungiUtente(u)
+					regUt-->>-con: Utente aggiunto
+					con-->>ui: Account salvato
+					ui-->>User: msgAccoutSalvato()
+
+				else
+					ui-->>User:msgLoginFallito()
+				end
 			end
 		end
-	else User richiede l'accesso
-		loop
-	    end
 	end
 
-	ui->>+con:salvaUtente(u)
-	con->>+regUt:aggiungiUtente(u)
-	regUt-->>-con:ritorno
-	con-->>-ui:ritorno
-	ui-->>User:msgAccoutSalvato()
-	ui-->>-User:msgAddio()
+	ui-->>-User: msgAddio()
 
