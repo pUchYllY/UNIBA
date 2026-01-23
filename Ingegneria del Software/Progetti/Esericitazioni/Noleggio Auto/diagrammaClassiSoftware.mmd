@@ -1,0 +1,71 @@
+classDiagram
+	class Veicolo
+		<<Entity>>
+		- marca:String
+		- targa:String
+		- categoria:String
+		- modello:String
+		- num_veicoli:int
+
+		+ setMarca()
+		+ getMarca()
+		+ setMrca()
+		+ get()
+		+ set()
+		+ get()
+		+ set()
+		+ get()
+		+ set()
+		+ get()
+		+ set()
+		+ get()
+		+ isDisponibile() bool
+
+	class Cliente
+		<<Entity>>
+		-nome:String
+		-cognome:String
+		-email:String
+		-telefono:String
+		-lista_prenotazioni:list~Prenotazioni~
+
+	class Prenotazioni
+		<<Entity>>
+		-veicolo_noleggio:Veicolo
+		-data_ritiro:Date
+		-data_restituzione:Date
+		-tariffa_aziendale:bool
+		-penale:int
+		-prezzo_inGiorni:float
+
+	class SalaNoleggio
+		<<Entity>>
+		-listaVeicoli:list~Veicolo~
+
+	class RegistroClienti
+		<<Entity>>
+		-listaClienti~Cliente~
+
+	class Console
+		<<Control>>
+		-sala_nole:SalaNoleggio
+
+		-clLog:Cliente
+		-pr:Prenotazione
+
+	class UI
+		<<Boundary>>
+		-console:Console
+
+	UI <-- Console
+
+	Console -- SalaNoleggio
+	Console -- RegistroClienti
+
+	Console -- Veicolo
+	Console -- Cliente
+	Console -- Prenotazione
+
+	Cliente -- Veicolo
+	Cliente *-- Prenotazione
+	Prenotazione *-- Veicolo

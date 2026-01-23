@@ -1,0 +1,51 @@
+classDiagram
+	class Veicolo
+		marca
+		targa
+		categoria
+		modello
+		num_veicoli
+
+	class Cliente
+		nome
+		cognome
+		email
+		telefono
+		lista_prenotazioni
+
+	class Prenotazioni
+		veicolo_noleggio
+		data_ritiro
+		data_restituzione
+		tariffa_aziendale
+		penale
+		prezzo_inGiorni
+
+	class SalaNoleggio
+		listaVeicoli
+
+	class RegistroClienti
+		listaClienti
+
+	class Console
+		negozio
+
+		utLog
+		pr
+		veic
+
+	class UI
+		console
+
+	UI <-- Console
+
+	Console *-- SalaNoleggio
+	Console *-- RegistroClienti
+
+	Console -- Veicolo
+	Console -- Cliente
+	Console -- Prenotazione
+
+	Cliente -- Veicolo
+	Cliente *-- Prenotazione
+	Prenotazione *-- Veicolo
