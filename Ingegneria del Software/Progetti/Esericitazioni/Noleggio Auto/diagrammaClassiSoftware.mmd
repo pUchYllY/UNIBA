@@ -9,6 +9,7 @@ classDiagram
 
 		+ set()/get()
 		+ isDisponibile() bool
+		+ isOfferta() bool
 
 	class Cliente
 		<<Entity>>
@@ -43,6 +44,8 @@ classDiagram
 		+ estraiVeicolo() Veicolo
 		+ rimuoviVeicolo() void
 
+		+ estraiVeicoli_disp_in_offerta() list~Veicolo~
+
 	class RegistroClienti
 		<<Entity>>
 		- listaClienti~Cliente~
@@ -54,6 +57,7 @@ classDiagram
 	class Console
 		<<Control>>
 		- sala_nole:SalaNoleggio
+		- listaVeicoli_offerta:list~Veicolo~
 
 		- clLog:Cliente
 		- pr:Prenotazione
@@ -63,6 +67,7 @@ classDiagram
 		+ distruggiCliente() void
 
 		+ cercaVeicolo() Veicolo
+		+ cercaVeicoli_in_offerta() list~Veicolo~
 
 		+ creaPrenotazione() Prenotazione
 		+ distruggiPrenotazione() void
@@ -80,17 +85,17 @@ classDiagram
 		+ cancellaPrenotazione() void
 
 		+ stampaVeicolo() void
+		+ stampaVeicoli_disp_in_offerta() void
 		+ stampaSalaNoleggio() void
 
 		+ stampaPrenotazione() void
 		+ stampaPrenotazioni() void
 
 
+	UI "1" -- Console: comunica con
 
-	UI <-- Console
-
-	Console <-- SalaNoleggio: contiene uno o piu' veicolo mediante
-	Console <-- RegistroClienti: contiene uno o piu' clienti mediante
+	Console "1" -- "1" SalaNoleggio: contiene uno o piu' veicolo mediante
+	Console "1" -- "1" RegistroClienti: contiene uno o piu' clienti mediante
 
 	Console "1" -- "1" Veicolo: contiene temporaneamente
 	Console "1" -- "1" Cliente: manipola temporaneamente
