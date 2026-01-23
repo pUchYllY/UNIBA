@@ -23,12 +23,12 @@ sequenceDiagram
 	activate ui
 	ui->>User: msgBenvenuto()
 
-	loop modAutenticazione != "chiusura" and modAutenticazione != "logout"
+	loop modAutenticazione != "chiusura"
 		ui->>User: msgModAutenticazione()
 		ui->>User: msgRichiestaAutenticazione()
 		User->>ui: inserisceModAutenticazione()
 
-		opt modAutenticazione != "logout"
+		opt opzione != "logout"
 			alt modAutenticazione == "registrazione"
 
 				loop risposta=="no"
@@ -97,14 +97,11 @@ sequenceDiagram
 								opt rispsta == "si"
 									ui->>+con: creaPrestito(titolo, isbn, genere)
 									create p : Prestito
-									con-->>-ui: Prestito creato
 
-									ui->>+con: salvaPrestito(p,l)
 									con->>+p: impostaLibroPrestito(l)
-									con->>p: impostaDataPrestito(data)
-									con->>p: impostaDataScadenza(data)
+									con->>p: impostaDataPrestito(giorno,mese,anno)
+									con->>p: impostaDataScadenza(giorno,mese,anno)
 									con->>p: setStatus("attivo")
-									p-->>-con: return p
 
 									con->>+u: appendiPrestito(p)
 									u-->>-con: Prestito assegnato

@@ -2,6 +2,20 @@
 
 classDiagram
 
+	class Data
+		<<entity>>
+
+		- giorno : int
+		- mese : int
+		- anno : int
+
+		+ setGiorno(nuovo : int) void
+		+ getGiorno() int
+		+ setMese(nuovo : int) void
+		+ getMese() int
+		+ setAnno(nuovo : int) void
+		+ getAnno() int
+
 	class Prestito
 		<<entity>>
 
@@ -13,7 +27,7 @@ classDiagram
 		- penale : int
 
 		+ setLibroPrestito(nuovoLibro : Libro) void
-		+ getLibro() Libro
+		+ getLibroPrestito() Libro
 		+ setDataPrestito(nuovaData : Data) void
 		+ getDataPrestito() Data
 		+ setDataScadenza(nuovaData : Data) void
@@ -38,7 +52,7 @@ classDiagram
 		+ setNominativo(nuovoNom : Stringa) void
 		+ getNominativo() String
 		+ setCodUtente(nuovoCod : int) void
-		+ getCodUtente() String
+		+ getCodUtente() int
 		+ setEmail(nuovaEmail : String) void
 		+ getEmail() String
 		+ setPassword(nuovaPass) void
@@ -76,10 +90,9 @@ classDiagram
 
 		- registro : List~Utente~
 
-		+ aggiungiUtente() void
+		+ aggiungiUtente(u : Utente) void
 		+ estraiUtente() Utente
 		+ rimuoviUtente() void
-		+ cercaUtente(email : String) void
 		+ ordinaUtenti() void
 		%%+ 
 		%%+ 
@@ -94,7 +107,6 @@ classDiagram
 		+ aggiungiLibro(l : Libro) void
 		+ estraiLibro() Libro
 		+ rimuoviLibro() void
-		+ cercaLibro(isbn : String) void
 		+ ordinaLibri() void
 		%%+ 
 		%%+ 
@@ -114,19 +126,18 @@ classDiagram
 		+ creaUtente(nominativo : String, email : String, password : String) bool
 		+ salvaUtente(u) void
 		+ modificaUtente() void
-		+ eliminaUtente() bool
+		+ eliminaUtente(email : String) bool
 		%%+ richiediUtente()
 
 		+ creaPrestito(t : String, isbn : String, genere : String) bool
 		+ salvaPrestito(p : Prestito,l : Libro) bool
 		+ modificaPrestito() void
-		+ eliminaPrestito(email : String) bool
-		+ trovaPrestito(isbn : String) void
+		+ eliminaPrestito(email : String) void
 
 	class UI
 		<<boundary>>
 
-		- c : Console
+		- con : Console
 
 		%% utente
 		+ registraAccount() void
@@ -176,7 +187,6 @@ classDiagram
 
 		+ inserisceRisposta() String
 		+ inserisceCredenzialiLibro(titolo : String, isbn : String, genere : String) void
-
 
 
 
