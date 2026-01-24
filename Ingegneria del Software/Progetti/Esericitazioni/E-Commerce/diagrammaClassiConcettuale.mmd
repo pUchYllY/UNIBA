@@ -1,0 +1,55 @@
+classDiagram
+	class Prodotti
+		codice
+		nome
+		marca
+		categoria
+		
+
+	class Carrello
+		listaProdotti
+
+	class Ordini
+		codice
+		pagamentoMetodoConfermato
+		destinazioneSpedizione
+		sommarioOrdine
+		carrelloConfermato
+		stato
+
+	class Pagamenti
+		metodo
+		nomeCarta
+		statoPagamento
+
+	class Utente
+		nominativo
+		codice
+		luogoResidenza
+		listaOrdini
+		preferenzaRitiro
+		metodoPagamento
+		business
+
+	class Store
+		catalogo
+
+	class RegistroUtenti
+		listaUtenti
+
+	class Console
+		catalogo
+		regUt
+
+		utLog
+		ord
+		carr
+
+
+	class UI
+		console
+
+
+
+
+
