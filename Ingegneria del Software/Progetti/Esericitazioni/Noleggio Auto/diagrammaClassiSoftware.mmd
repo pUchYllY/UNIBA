@@ -6,13 +6,18 @@ classDiagram
 		- categoria:String
 		- modello:String
 		- num_veicoli:int
+		- offerta:bool
+		- disponibile:bool
+		- prezzoGiornaliero:float
 
+		+ Costruttore(marca:String,targa:String,categoria:String,modello:String,num_veicoli:int,offerta:bool,disponibile:bool)
 		+ set()/get()
 		+ isDisponibile() bool
 		+ isOfferta() bool
 
 	class Cliente
 		<<Entity>>
+		- codice:String
 		- nome:String
 		- cognome:String
 		- email:String
@@ -57,7 +62,6 @@ classDiagram
 	class Console
 		<<Control>>
 		- sala_nole:SalaNoleggio
-		- listaVeicoli_offerta:list~Veicolo~
 
 		- clLog:Cliente
 		- pr:Prenotazione

@@ -9,10 +9,11 @@ sequenceDiagram
 	participant Veicolo
 	participant Cliente
 
-	Cliente->>+UI: stampaVeicoli_disp_in_offerta()
-	create listaVeicoli_offerta:list~Veicolo~
+	Cliente->>+UI: Richiede offerte disponibli di veicoli
 
 	UI->>+Console:cercaVeicolo_in_offerta()
+	create listaVeicoli_offerta:list~Veicolo~
+
 	loop per ogni Veicolo in SalaNoleggio.listaVeicoli
 		opt Veicolo.isOfferta() == true and isDisponibile == true
 			Console->>+SalaNoleggio:estraiVeicolo_disp_in_offerta()
