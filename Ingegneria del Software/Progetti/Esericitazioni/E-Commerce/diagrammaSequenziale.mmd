@@ -16,23 +16,33 @@ sequenceDiagram
 	User->>UI: Inserisce credenziali prodotto
 	UI->>+Console:trovaProdotto(codice)
 
+	%% far ritornare messaggi, no i booleani
 	loop per ogni Prodotto in Store.catalogo and codice != Prodotto.codice
-		opt codice == Prodotto.codice
-			Console-->>-UI: return true
+	%% da aggiungere casi di prodotti trovati ma non disponibili
+		alt codice == Prodotto.codice
+			Console-->UI: prodotto trovato
+		else
+			Console-->>-UI: prodotto non trovato
 		end
 	end
 
-	UI-->>User: Richiede conferma di aggiunta del prodotto al carrello
-	User->>UI: Inserisce risposta
+	%% idem per questo if..else
+	alt Prodotto e' stato trovato
+		UI-->>User: stampa messaggio prodotto trovato
+		UI->>User: Richiede conferma di aggiunta del prodotto al carrello
+		User->>UI: Inserisce risposta
 
-	alt risposta == "si"
-		UI->>+Console: salvaProdottoCarrello(Prodotto)
-		Console->>+Carrello: appendiProdotto(Prodotto)
-		Carrello->>-Console: Prodotto aggiunto
-		Console-->>-UI: Prodotto salvato
-		UI-->>-User: stampa messagggio "Prodotto aggiunto al carrello"
+		alt risposta == "si"
+			UI->>+Console: salvaProdottoCarrello(Prodotto)
+			Console->>+Carrello: appendiProdotto(Prodotto)
+			Carrello->>-Console: Prodotto aggiunto
+			Console-->>-UI: Prodotto salvato
+			UI-->>-User: stampa messagggio "Prodotto aggiunto al carrello"
+		else
+			UI->>+Console: distruggiProdotto_temporaneo()
+			Console-->>-UI: Prodotto distrutto
+			UI-->>-User: stampa messaggio "Prodotto non aggiunto al carrello"
+		end
 	else
-		UI->>+Console: distruggiProdotto_temporaneo()
-		Console-->>-UI: Prodotto distrutto
-		UI-->>-User: stampa messaggio "Prodotto non aggiunto al carrello"
+		UI-->>-User: stampa messaggio "prodotto non trovato"
 	end
