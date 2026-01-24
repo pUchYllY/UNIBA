@@ -4,7 +4,11 @@ classDiagram
 		nome
 		marca
 		categoria
-		
+		disponibile
+		numDisponibili
+		offerta
+		tassoOfferta
+		costo
 
 	class Carrello
 		listaProdotti
@@ -13,7 +17,8 @@ classDiagram
 		codice
 		pagamentoMetodoConfermato
 		destinazioneSpedizione
-		sommarioOrdine
+		dataAcquisto
+		dataConsegna
 		carrelloConfermato
 		stato
 
@@ -38,17 +43,32 @@ classDiagram
 		listaUtenti
 
 	class Console
-		catalogo
+		store
 		regUt
 
 		utLog
 		ord
 		carr
 
-
 	class UI
 		console
 
+	UI -- Console
+
+	Console -- RegistroUtenti
+	Console -- Store
+	Console -- Prodotti
+	Console -- Ordine
+	Console -- Carrello
+	Console -- Utente
+
+	Store *-- Prodotto
+
+	RegistroUtenti *-- Utente
+	Utente *-- Pagamento
+	Utente *-- Ordine
+	Utente *-- Carrello
+	Utente -- Prodotto
 
 
 
