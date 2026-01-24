@@ -20,7 +20,7 @@ classDiagram
 		- listaProdotti : List~Prodotto~
 
 		+ Costruttore() Carrello
-		+ appendiProdotto() 
+		+ appendiProdotto(p : Prodotto) void
 		+ estraiProdotto() Prodotto
 		+ rimuoviProdotto() void
 		+ ordinaProdotti() void
@@ -28,7 +28,7 @@ classDiagram
 	class Ordine
 		<<Entity>>
 		+ codice : String
-		+ pagamentoMetodoConfermato : Pagamento
+		+ metodo : Pagamento
 		+ destinazioneSpedizione : String
 		+ dataAcquisto : String
 		+ dataConsegna : String
@@ -54,7 +54,6 @@ classDiagram
 		- luogoResidenza
 		- listaOrdini
 		- preferenzaRitiro
-		- metodoPagamento
 		- business
 
 		+ set()/get()
@@ -72,9 +71,9 @@ classDiagram
 		+ rimuoviProdotto() void
 		+ ordinaProdotti() void
 
-	class RegistroUtenti
-		<<Entity>>
-		- listaUtenti : List~Utente~
+class RegistroUtenti
+	<<Entity>>
+	- listaUtenti : List~Utente~
 
 		+ appendiUtente(u : Utente) void
 		+ estraiUtente() Utente
@@ -89,12 +88,15 @@ classDiagram
 		- utLog : Utente
 		- ord : Ordine
 		- carr : Carrello
+		- prod : Prodotto
 
 		+ creaUtente() void
 		+ aggiornaUtente() void
 		+ eliminaUtente() void
+
+		+ distruggiProdotto_temporaneo() void
 		
-		+ cercaProdotto() bool
+		+ trovaProdotto() bool
 		+ aggiungiProdtto_carrello() void
 		+ distruggiProdotto_da_carrello() void
 
@@ -115,6 +117,7 @@ classDiagram
 		+ login() void
 		+ cancellazioneAccount() void
 
+		+ cercaProdotto() void
 		+ aggiungiProdotto_carrello() void
 		+ rimuoviProdotto_carrello() void
 
@@ -127,22 +130,27 @@ classDiagram
 
 
 
-	UI -- Console: Comunica con 
+	UI "1" -- "1" Console: Comunica con 
 
-	Console -- RegistroUtenti: manipola gli utenti mediante 
-	Console -- Store: manipola i prodotti mediante 
-	Console -- Prodotti: 
-	Console -- Ordine
-	Console -- Carrello
-	Console -- Utente
+	Console "1" -- "1" RegistroUtenti: manipola gli utenti mediante 
+	Console "1" -- "1" Store: manipola i prodotti mediante 
+	Console "1" -- "1" Prodotti: manipola temporaneamente
+	Console "1" -- "1" Ordine: manipola temporaneamente
+	Console "1" -- "1" Carrello: manipola temporaneamente
+	Console "1" -- "1" Utente: mantiene l'accesso
 
-	Store *-- Prodotto
+	Store "1" *-- "1..*" Prodotto: contiene
 
-	RegistroUtenti *-- Utente
-	Utente *-- Pagamento
-	Utente *-- Ordine
-	Utente *-- Carrello
-	Utente -- Prodotto
+	RegistroUtenti "1" *-- "1..*" Utente: contiene
+
+	Utente "1" -- "1" Pagamento: applica
+	Utente "1" *-- "1..*" Ordine: effettua
+	Utente "1" *-- "1" Carrello: aggiunge uno o piu' prodotti al
+	Utente "1" -- "1..*" Prodotto: sceglie e puo' comprare
+	
+	Carrello "1" o-- "1..*" Prodotto: contiene
+
+	Ordine "1" *-- "1" Pagamento: mostra 
 
 
 
