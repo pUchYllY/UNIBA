@@ -1,0 +1,26 @@
+sequenceDiagram
+	actor User
+
+	participant UI
+	participant Console
+	participant	RegistroUtenti
+	participant SalaNoleggio
+	participant Prenotazione
+	participant Veicolo
+	participant Cliente
+
+	Cliente->>+UI: Richiede offerte disponibli di veicoli
+
+	UI->>+Console:cercaVeicolo_in_offerta()
+	create listaVeicoli_offerta:list~Veicolo~
+
+	loop per ogni Veicolo in SalaNoleggio.listaVeicoli
+		opt Veicolo.isOfferta() == true and isDisponibile == true
+			Console->>+SalaNoleggio:estraiVeicolo_disp_in_offerta()
+			SalaNoleggio-->>-Console: return Veicolo
+		end
+
+		Console-->>-UI:restiuzione lista veicolo disponibili in offerta
+	end
+
+	UI-->>-User: stampata lista veicoli disponibili in offerta

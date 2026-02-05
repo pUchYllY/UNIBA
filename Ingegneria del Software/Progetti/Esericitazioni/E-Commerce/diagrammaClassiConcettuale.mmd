@@ -1,0 +1,75 @@
+classDiagram
+	class Prodotti
+		codice
+		nome
+		marca
+		categoria
+		disponibile
+		numDisponibili
+		offerta
+		tassoOfferta
+		costo
+
+	class Carrello
+		listaProdotti
+
+	class Ordine
+		codice
+		metodo
+		destinazioneSpedizione
+		dataAcquisto
+		dataConsegna
+		carrelloConfermato
+		stato
+
+	class Pagamento
+		metodo
+		nomeCarta
+		statoPagamento
+
+	class Utente
+		nominativo
+		codice
+		luogoResidenza
+		listaOrdini
+		preferenzaRitiro
+		metodoPagamento
+		business
+
+	class Store
+		catalogo
+
+	class RegistroUtenti
+		listaUtenti
+
+	class Console
+		store
+		regUt
+
+		utLog
+		ord
+		carr
+
+	class UI
+		console
+
+	UI -- Console
+
+	Console -- RegistroUtenti
+	Console -- Store
+	Console -- Prodotti
+	Console -- Ordine
+	Console -- Carrello
+	Console -- Utente
+
+	Store *-- Prodotto
+
+	RegistroUtenti *-- Utente
+	Utente *-- Pagamento
+	Utente *-- Ordine
+	Utente *-- Carrello
+	Utente -- Prodotto
+
+
+
+

@@ -1,0 +1,157 @@
+classDiagram
+	class Prodotti
+		<<Entity>>
+		- codice : String
+		- nome : String
+		- marca : String
+		- categoria : String
+		- disponibile : bool
+		- numDisponibili : int
+		- offerta : bool
+		- tassoOfferta : int
+		- costo : float
+		
+		+ set()/get()
+		+ isDisponibile() bool
+		+ isOfferta() bool
+
+	class Carrello
+		<<Entity>>
+		- listaProdotti : List~Prodotto~
+
+		+ Costruttore() Carrello
+		+ appendiProdotto(p : Prodotto) void
+		+ estraiProdotto() Prodotto
+		+ rimuoviProdotto() void
+		+ ordinaProdotti() void
+
+	class Ordine
+		<<Entity>>
+		+ codice : String
+		+ metodo : Pagamento
+		+ destinazioneSpedizione : String
+		+ dataAcquisto : String
+		+ dataConsegna : String
+		+ carrelloConfermato : Carrello
+		+ stato : String
+
+		+ set()/get()
+		+ assegnaPagamento(p : Pagamento) void
+		+ assegnaCarrello(c : Carrello) void
+
+	class Pagamento
+		<<Entity>>
+		+ metodo : String
+		+ nomeCarta : String
+		+ statoPagamento : String
+
+		+ set()/get()
+
+	class Utente
+		<<Entity>>
+		- nominativo
+		- codice
+		- luogoResidenza
+		- listaOrdini
+		- preferenzaRitiro
+		- business
+
+		+ set()/get()
+		+ appendiOrdine(o : Ordine) void
+		+ estraiOrdine() Ordine
+		+ rimuoviOrdine() Ordine
+		+ ordinaOrdini() void
+
+	class Store
+		<<Entity>>
+		- catalogo : List~Prodotto~
+
+		+ appendiProdotto(p : Prodotto) void
+		+ estraiProdotto() Prodotto
+		+ rimuoviProdotto() void
+		+ ordinaProdotti() void
+
+class RegistroUtenti
+	<<Entity>>
+	- listaUtenti : List~Utente~
+
+		+ appendiUtente(u : Utente) void
+		+ estraiUtente() Utente
+		+ rimuoviUtente() void
+		+ ordinaUtenti() void
+
+	class Console
+		<<Control>>
+		- store : Store
+		- regUT : RegistroUtenti
+
+		- utLog : Utente
+		- ord : Ordine
+		- carr : Carrello
+		- prod : Prodotto
+
+		+ creaUtente() void
+		+ aggiornaUtente() void
+		+ eliminaUtente() void
+
+		+ distruggiProdotto_temporaneo() void
+		
+		+ trovaProdotto() bool
+		+ aggiungiProdtto_carrello() void
+		+ distruggiProdotto_da_carrello() void
+
+		+ creaCarrello() void
+		+ salvaProdottoCarrello(p : Prodotto) void
+		+ rimuoviProdotto_da_carrello() void
+
+		+ creaOrdine() void
+		+ confermaOrdine() void
+		+ distruggiOrdine() void
+
+
+	class UI
+		<<Boudary>>
+		- console : Console
+
+		+ registrazione() void
+		+ login() void
+		+ cancellazioneAccount() void
+
+		+ cercaProdotto() void
+		+ aggiungiProdotto_carrello() void
+		+ rimuoviProdotto_carrello() void
+
+		+ effettuaOrdine() void
+		+ aggiornaOrdine() void
+		+ cancellaOrdine() void
+
+		+ mostraCatalogo() void
+		+ mostraCatalogo_offerte() void
+
+
+
+	UI "1" -- "1" Console: Comunica con 
+
+	Console "1" -- "1" RegistroUtenti: manipola gli utenti mediante 
+	Console "1" -- "1" Store: manipola i prodotti mediante 
+	Console "1" -- "1" Prodotti: manipola temporaneamente
+	Console "1" -- "1" Ordine: manipola temporaneamente
+	Console "1" -- "1" Carrello: manipola temporaneamente
+	Console "1" -- "1" Utente: mantiene l'accesso
+
+	Store "1" *-- "1..*" Prodotto: contiene
+
+	RegistroUtenti "1" *-- "1..*" Utente: contiene
+
+	Utente "1" -- "1" Pagamento: applica
+	Utente "1" *-- "1..*" Ordine: effettua
+	Utente "1" *-- "1" Carrello: aggiunge uno o piu' prodotti al
+	Utente "1" -- "1..*" Prodotto: sceglie e puo' comprare
+	
+	Carrello "1" o-- "1..*" Prodotto: contiene
+
+	Ordine "1" *-- "1" Pagamento: mostra 
+
+
+
+

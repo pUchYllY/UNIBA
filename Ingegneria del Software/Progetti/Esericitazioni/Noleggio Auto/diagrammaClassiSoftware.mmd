@@ -1,0 +1,110 @@
+classDiagram
+	class Veicolo
+		<<Entity>>
+		- marca:String
+		- targa:String
+		- categoria:String
+		- modello:String
+		- num_veicoli:int
+		- offerta:bool
+		- disponibile:bool
+		- prezzoGiornaliero:float
+
+		+ Costruttore(marca:String,targa:String,categoria:String,modello:String,num_veicoli:int,offerta:bool,disponibile:bool)
+		+ set()/get()
+		+ isDisponibile() bool
+		+ isOfferta() bool
+
+	class Cliente
+		<<Entity>>
+		- codice:String
+		- nome:String
+		- cognome:String
+		- email:String
+		- telefono:String
+		- lista_prenotazioni:list~Prenotazioni~
+
+		+ set()/get()
+		+ appendiPrenotazione(p:Prenotazione) void
+		+ estraiPrenotazione() Prenotazione
+		+ restituisciPrenotazione() void
+
+	class Prenotazioni
+		<<Entity>>
+		- veicolo_noleggio:Veicolo
+		- data_ritiro:Date
+		- data_restituzione:Date
+		- tariffa_aziendale:bool
+		- penale:int
+		- prezzo_inGiorni:float
+
+		+ set()/get()
+		+ isPenale() bool
+
+	class SalaNoleggio
+		<<Entity>>
+		- listaVeicoli:list~Veicolo~
+
+		+ appendiVeicolo(v:Veicolo) void
+		+ estraiVeicolo() Veicolo
+		+ rimuoviVeicolo() void
+
+		+ estraiVeicoli_disp_in_offerta() list~Veicolo~
+
+	class RegistroClienti
+		<<Entity>>
+		- listaClienti~Cliente~
+
+		+ appendiCliente(c:Cliente) void
+		+ estraiCliente() Cliente
+		+ rimuoviCliente(email:String) void
+
+	class Console
+		<<Control>>
+		- sala_nole:SalaNoleggio
+
+		- clLog:Cliente
+		- pr:Prenotazione
+
+		+ creaCliente() Cliente
+		+ salvaCliente() void
+		+ distruggiCliente() void
+
+		+ cercaVeicolo() Veicolo
+		+ cercaVeicoli_in_offerta() list~Veicolo~
+
+		+ creaPrenotazione() Prenotazione
+		+ distruggiPrenotazione() void
+
+	class UI
+		<<Boundary>>
+		- console:Console
+
+		+ registraAccount() void
+		+ accediAccount() void
+		+ cancellaAccount() void
+
+		+ effettuaPrenotazione() void
+		+ modificaPrenotazione() void
+		+ cancellaPrenotazione() void
+
+		+ stampaVeicolo() void
+		+ stampaVeicoli_disp_in_offerta() void
+		+ stampaSalaNoleggio() void
+
+		+ stampaPrenotazione() void
+		+ stampaPrenotazioni() void
+
+
+	UI "1" -- Console: comunica con
+
+	Console "1" -- "1" SalaNoleggio: contiene uno o piu' veicolo mediante
+	Console "1" -- "1" RegistroClienti: contiene uno o piu' clienti mediante
+
+	Console "1" -- "1" Veicolo: contiene temporaneamente
+	Console "1" -- "1" Cliente: manipola temporaneamente
+	Console "1" -- "1" Prenotazione: manipola temporaneamente
+
+	Cliente "1" -- "1..*" Veicolo: puo' noleggiare
+	Cliente "1" *-- "1" Prenotazione: effettua
+	Prenotazione "1" *-- "1" Veicolo: contiene
