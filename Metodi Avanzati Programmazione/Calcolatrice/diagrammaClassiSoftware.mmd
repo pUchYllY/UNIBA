@@ -1,0 +1,39 @@
+classDiagram
+	class Calcolatrice
+		<<Boundary>>
+
+		+ leggiOperazione(br : BufferedReader) void
+		+ stampaRisultato() void
+		+ mostraRisultatiPrec() void
+
+	class Console
+		<<Control>>
+
+		+ effettuaOperazione(s : String) void
+
+	class Memoria
+		<<Entity>>
+		- listaRisultati : List~Double~
+
+		+ appendiRisultato(r : Double) void
+		+ estraiRisultato() Double
+		+ cancellaRisultato(val : Double) void
+
+	class Operazioni
+		<<Entity>>
+		- oper1 : Double
+		- oper2 : Double
+		- ris : Double
+
+		+ setOper1(nuovoOper : Double) void
+		+ getOper1() Double
+		+ setOper2(nuovoOper : Double) void
+		+ getOper2() Double
+		+ setRis(nuovoRis : Double) void
+		+ getRis() Double
+
+		<<metodi statici>>
+		+ addizione(add1 : Double,add2 : Double) Double
+		+ sottrazione(dim : Double,sott : Double) Double
+		+ moltiplicazione(fatt1 : Double,fatt2 : Double) Double
+		+ divisione(div1 : Double,div2 : Double) Double
