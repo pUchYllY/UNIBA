@@ -4,15 +4,33 @@
 
 package com.mycompany.calcolatrice;
 
+import java.util.*;
+import java.io.*;
+
 /**
  *
  * @author antonio
  */
 
-public class Operazioni{
-	public static double addizione(){
-		double a,b;
+public class Operazioni {
+	public static double addizione(double a, double b) {
 
-		s
+		return a + b;
 	}
+
+	public static double sottrazione(double a, double b) {
+
+		return a - b;
+	}
+
+	public static double moltiplicazione(double a, double b) {
+
+		return a * b;
+	}
+
+	public static double divisione(double a, double b) {
+
+		return a / b;
+	}
+
 }
