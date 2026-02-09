@@ -1,15 +1,11 @@
- /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
-import java.util.*
-import java.io.*
+/*
+* Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+*/
 
 package com.mycompany.calcolatrice;
-import com.mycompany.calcolatrice.util.Console
-import com.mycompany.calcolatrice.util.Operazioni
-import com.mycompany.calcolatrice.util.Memoria
-//import Operazioni.java
+
+import java.util.*;
+import java.io.*;
 
 /**
  *
@@ -17,22 +13,41 @@ import com.mycompany.calcolatrice.util.Memoria
  */
 
 public class Calcolatrice {
-	 public void leggiOperazione(BufferedReader br){
-		 br=new BufferedReader(new InputStreamReader(System.in)); // modo piu' efficiente di new Scanner(System.in)
-	 }
-	 public static void main(String[] args) {
-		 BufferedReader br;
-		 String operazione;
-		 String risposta;
+	public static void leggiStringa(StringBuilder s) throws IOException {
+		try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) {
+			char[] buffer = new char[100];
+			int n;
 
-		 System.out.println("----------------- CALCOLATRICE -----------------");
-		 do{
-			 System.out.print("Inserire il calcolo da eseguire: ");
+			while ((n = br.read(buffer)) != -1) {
+				s.append(buffer, 0, n);
+			}
+		}
+	}
 
-			 leggiOperazione(br);
-			 operazione=br.readLine();
+	public static void main(String[] args) {
+		StringBuilder operazione = new StringBuilder();
+		StringBuilder risposta = new StringBuilder();
+		StringBuilder no = new StringBuilder("no");
 
-			 //console.effettuaOperazione(operazione);
-		 }while(risposta!="no")
-	 }
- }
+		System.out.println("----------------- CALCOLATRICE -----------------");
+		do {
+			System.out.print("Inserire il calcolo da eseguire: ");
+
+			try {
+				leggiStringa(operazione);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// console.effettuaOperazione(operazione);
+
+			try {
+				leggiStringa(risposta);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} while (!risposta.toString().equals(no.toString()));
+
+		System.out.println("Grazie per avermi usato e auguro una buona giornata :D\n");
+	}
+}
