@@ -10,6 +10,8 @@ classDiagram
 		<<Control>>
 
 		+ effettuaOperazione(s : String) void
+		+ salvaRisultato(o : StringBuilder) void
+		+ eliminaRisultato(d : double) void
 
 	class Memoria
 		<<Entity>>
@@ -19,21 +21,32 @@ classDiagram
 		+ estraiRisultato() Double
 		+ cancellaRisultato(val : Double) void
 
+	class Risultato
+		<<Entity>>
+		- operazione : String
+		- valore : double
+
+		+ setOperazione(nuovaOperazione : String) void
+		+ getOperazione() String
+		+ setValore(nuovoValore : double) void
+		+ getValore() double
+
 	class Operazioni
 		<<Entity>>
-		- oper1 : Double
-		- oper2 : Double
-		- ris : Double
-
-		+ setOper1(nuovoOper : Double) void
-		+ getOper1() Double
-		+ setOper2(nuovoOper : Double) void
-		+ getOper2() Double
-		+ setRis(nuovoRis : Double) void
-		+ getRis() Double
 
 		<<metodi statici>>
-		+ addizione(add1 : Double,add2 : Double) Double
-		+ sottrazione(dim : Double,sott : Double) Double
-		+ moltiplicazione(fatt1 : Double,fatt2 : Double) Double
-		+ divisione(div1 : Double,div2 : Double) Double
+		+ addizione(add1 : double,add2 : double) double
+		+ sottrazione(dim : double,sott : double) double
+		+ moltiplicazione(fatt1 : double,fatt2 : double) double
+		+ divisione(div1 : double,div2 : double) double
+
+
+
+	Calcolatrice <-- Console: comunica con
+	Console <-- Operazioni: effettua le
+	Console -- "1..*" Risultato: manipola
+	Console -- "1" Memoria: salva i risutati in
+
+	Memoria *-- "1..*" Risultato: contiene i risultati
+
+	Operazioni -- "1.." Risultato: elabora i
